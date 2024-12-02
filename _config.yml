@@ -1,0 +1,8 @@
+safe: true
+title: 'Bill Frye'
+author: 'Bill Frye'
+description: 'Portfolio'
+url: 'https://billfrye.biz'
+permalink: '/:year/:month/:day/:title'
+sass:
+  style: compressed
