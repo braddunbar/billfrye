@@ -5,7 +5,10 @@
   },
   "fmt": { "semiColons": false },
   "tasks": {
-    "dev": "deno run --allow-net --watch main.ts"
+    "build": "",
+    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
+    "dev": "deno run --allow-net --watch main.ts",
+    "test": "deno test"
   },
   "imports": {
     "preact": "npm:preact@10",
