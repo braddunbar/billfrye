@@ -1,9 +1,8 @@
-import { render } from "preact-render-to-string"
+import { Index } from "./views/index.tsx"
+import { layout } from "./layout.tsx"
 
 export const index = (_request: Request) => {
-  const html = render(
-    <h1>Bill Frye!</h1>,
-  )
+  const html = layout(<Index />, "index")
 
   return new Response(html, {
     headers: {

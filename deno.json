@@ -5,13 +5,17 @@
   },
   "fmt": { "semiColons": false },
   "tasks": {
+    "build": "deno run -A main.ts build",
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
-    "dev": "deno run --allow-net --watch main.ts",
+    "dev": "deno run -A --watch main.ts dev",
     "test": "deno test"
   },
   "imports": {
     "preact": "npm:preact@10",
     "preact-render-to-string": "npm:preact-render-to-string@6",
-    "@std/assert": "jsr:@std/assert@1"
+    "rolldown": "npm:rolldown",
+    "@deno/rolldown-plugin": "jsr:@deno/rolldown-plugin",
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/http/file-server": "jsr:@std/http/file-server"
   }
 }

@@ -20,6 +20,8 @@ jobs:
         run: deno task check
       - name: Test
         run: deno task test
+      - name: Build
+        run: deno task build
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         if: ${{ success() && github.ref_name == 'main' }}
