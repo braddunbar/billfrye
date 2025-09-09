@@ -45,7 +45,7 @@ const outputOptions: OutputOptions = {
 }
 
 export const readAssets = async () => {
-  manifest = JSON.parse(await Deno.readTextFile('./manifest.json'))
+  manifest = JSON.parse(await Deno.readTextFile("./manifest.json"))
 }
 
 export const buildAssets = async () => {
