@@ -10,6 +10,9 @@ const serve = () => {
     if (STATIC.exec(request.url)) {
       return serveDir(request, {
         fsRoot: "static",
+        headers: [
+          "cache-control: max-age=315360000",
+        ],
         urlRoot: "static",
       })
     }
