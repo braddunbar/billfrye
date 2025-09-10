@@ -11,6 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: deploy-group # optional: ensure only one action runs at a time
     steps:
+      - name: s3cmd
+        uses: s3-actions/s3cmd@v2.0.1
+        with:
+          provider: digitalocean
+          region: 'atl1'
+          access_key: ${{ secrets.S3_ACCESS_KEY }}
+          secret_key: ${{ secrets.S3_SECRET_KEY }}
       - uses: actions/checkout@v4
       - name: Deno
         uses: denoland/setup-deno@v1
@@ -22,6 +29,8 @@ jobs:
         run: deno task test
       - name: Build
         run: deno task build
+      - name: Sync S3
+        run: s3cmd sync --recursive --acl-public static s3://billfrye
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         if: ${{ success() && github.ref_name == 'main' }}
