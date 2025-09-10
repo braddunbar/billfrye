@@ -1,6 +1,8 @@
 import { InputOptions, OutputOptions, rolldown, watch } from "rolldown"
 import denoPlugin from "@deno/rolldown-plugin"
 
+const BASE = Deno.env.get('ASSETS_BASE') || '/static'
+
 type Manifest = {
   files: Record<string, string>
 }
@@ -10,7 +12,7 @@ export let manifest: Manifest = {
 }
 
 export const assetUrl = (name: string): string | undefined => {
-  return `/static/js/${manifest.files[name]}`
+  return `${BASE}/js/${manifest.files[name]}`
 }
 
 const inputOptions: InputOptions = {
