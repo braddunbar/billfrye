@@ -25,8 +25,8 @@ const serve = () => {
 
     const response = index(request)
 
-    if (!response.headers.get('cache-control')) {
-      response.headers.set('cache-control', 'private,must-revalidate,max-age=0')
+    if (!response.headers.get("cache-control")) {
+      response.headers.set("cache-control", "private,must-revalidate,max-age=0")
     }
 
     return response

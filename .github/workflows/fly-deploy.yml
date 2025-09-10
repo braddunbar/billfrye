@@ -15,7 +15,7 @@ jobs:
         uses: s3-actions/s3cmd@v2.0.1
         with:
           provider: digitalocean
-          region: 'atl1'
+          region: "atl1"
           access_key: ${{ secrets.S3_ACCESS_KEY }}
           secret_key: ${{ secrets.S3_SECRET_KEY }}
       - uses: actions/checkout@v4
