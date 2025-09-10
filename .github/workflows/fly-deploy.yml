@@ -30,7 +30,8 @@ jobs:
       - name: Build
         run: deno task build
       - name: Sync S3
-        run: s3cmd sync --recursive --acl-public static s3://billfrye
+        working-directory: static
+        run: s3cmd sync --recursive --acl-public . s3://billfrye
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         if: ${{ success() && github.ref_name == 'main' }}
