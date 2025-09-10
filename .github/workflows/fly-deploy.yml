@@ -31,7 +31,7 @@ jobs:
         run: deno task build
       - name: Sync S3
         working-directory: static
-        run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' --add-header='Access-Control-Allow-Origin:*' . s3://billfrye
+        run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only
         if: ${{ success() && github.ref_name == 'main' }}
