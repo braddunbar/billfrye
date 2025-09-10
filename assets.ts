@@ -1,7 +1,7 @@
 import { InputOptions, OutputOptions, rolldown, watch } from "rolldown"
 import denoPlugin from "@deno/rolldown-plugin"
 
-const BASE = Deno.env.get('ASSETS_BASE') || '/static'
+const BASE = Deno.env.get("ASSETS_BASE") || "/static"
 
 type Manifest = {
   files: Record<string, string>
