@@ -17,6 +17,11 @@ jobs:
           access_key: ${{ secrets.S3_ACCESS_KEY }}
           secret_key: ${{ secrets.S3_SECRET_KEY }}
 
+      - name: doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - uses: actions/checkout@v4
 
       - name: Deno
@@ -37,6 +42,5 @@ jobs:
         working-directory: static
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
 
-      - uses: digitalocean/app_action/deploy@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: deploy
+        run: doctl apps create-deployment 6660b6a7-0bef-428f-ba09-1068006f15ff
