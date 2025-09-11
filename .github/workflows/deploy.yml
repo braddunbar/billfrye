@@ -1,6 +1,4 @@
-# See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
-
-name: Fly Deploy
+name: Deploy
 on:
   push:
     branches:
@@ -9,7 +7,7 @@ jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
-    concurrency: deploy-group # optional: ensure only one action runs at a time
+    concurrency: deploy-group
     steps:
       - name: s3cmd
         uses: s3-actions/s3cmd@v2.0.1
@@ -18,22 +16,27 @@ jobs:
           region: "atl1"
           access_key: ${{ secrets.S3_ACCESS_KEY }}
           secret_key: ${{ secrets.S3_SECRET_KEY }}
+
       - uses: actions/checkout@v4
+
       - name: Deno
         uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x
+
       - name: Check
         run: deno task check
+
       - name: Test
         run: deno task test
+
       - name: Build
         run: deno task build
+
       - name: Sync S3
         working-directory: static
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        if: ${{ success() && github.ref_name == 'main' }}
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - uses: digitalocean/app_action/deploy@v2
+       with:
+         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
