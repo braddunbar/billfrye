@@ -38,5 +38,5 @@ jobs:
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
 
       - uses: digitalocean/app_action/deploy@v2
-       with:
-         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
