@@ -7,5 +7,6 @@ USER deno
 
 COPY . .
 RUN deno cache main.ts
+RUN deno task build
 
 CMD ["deno", "run", "-A", "main.ts"]
