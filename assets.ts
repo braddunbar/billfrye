@@ -53,7 +53,7 @@ export const readAssets = async () => {
 export const buildAssets = async () => {
   const bundle = await rolldown(inputOptions)
   await bundle.write({
-    outputOptions,
+    ...outputOptions,
     minify: true,
   })
 }
