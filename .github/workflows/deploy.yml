@@ -55,7 +55,7 @@ jobs:
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
 
       - name: Build image
-        run: docker buildx build --platform linux/amd64 -t billfrye .
+        run: docker buildx build --platform linux/amd64 --output type=docker -t billfrye .
 
       - name: Tag image
         run: docker tag billfrye registry.digitalocean.com/billfrye/web:latest
