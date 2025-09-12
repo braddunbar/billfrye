@@ -22,6 +22,9 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: doctl login
+        run: doctl registry login
+
       - uses: actions/checkout@v4
 
       - name: Deno
