@@ -41,9 +41,17 @@ jobs:
       - name: Build
         run: deno task build
 
-      - name: Sync S3
+      - name: Push to CDN
         working-directory: static
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6.5.0
+        with:
+          context: .
+          push: true
+          tags: registry.digitalocean.com/billfrye:latest
 
       - name: deploy
         run: doctl apps create-deployment 6660b6a7-0bef-428f-ba09-1068006f15ff
