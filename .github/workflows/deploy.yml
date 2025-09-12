@@ -44,9 +44,6 @@ jobs:
       - name: Test
         run: deno task test
 
-      - name: Cache
-        run: deno cache main.ts
-
       - name: Build
         run: deno task build
 
