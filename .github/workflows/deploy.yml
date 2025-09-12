@@ -54,13 +54,11 @@ jobs:
         working-directory: static
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
 
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@v6.5.0
-        with:
-          context: .
-          push: true
-          tags: registry.digitalocean.com/billfrye:latest
+      - name: Build image
+        run: docker buildx --platform linux/amd64 -t billfrye .
 
-      - name: deploy
-        run: doctl apps create-deployment 6660b6a7-0bef-428f-ba09-1068006f15ff
+      - name: Tag image
+        run: docker tag billfrye registry.digitalocean.com/billfrye/web:latest
+
+      - name: Push image
+        run: docker push registry.digitalocean.com/billfrye/web:latest
