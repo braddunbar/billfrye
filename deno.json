@@ -8,7 +8,7 @@
     "build": "deno run -A main.ts build",
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "dev": "deno run -A --watch main.ts dev",
-    "test": "deno test"
+    "test": "deno test -A"
   },
   "imports": {
     "preact": "npm:preact@10",

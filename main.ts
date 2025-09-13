@@ -30,30 +30,43 @@ const route = async (request: Request): Promise<Response> => {
   return new Response("404", { status: 404 })
 }
 
-const serve = () => {
-  Deno.serve({ port: 4444 }, async (request) => {
-    const response = await route(request)
+export const serveRequest = async (request: Request): Promise<Response> => {
+  const response = await route(request)
 
-    if (!response.headers.get("cache-control")) {
-      response.headers.set("cache-control", "private,must-revalidate,max-age=0")
-    }
+  if (!response.headers.get("cache-control")) {
+    response.headers.set("cache-control", "private,must-revalidate,max-age=0")
+  }
 
-    return response
-  })
+  return response
 }
 
-switch (Deno.args[0]) {
-  case "build":
-    await buildAssets()
-    break
+export const serve = (options: { port?: number } = {}) => {
+  options.port ??= 0
+  console.log(options)
+  const server = Deno.serve(options, serveRequest)
 
-  case "dev":
-    watchAssets()
-    serve()
-    break
+  return {
+    port: server.addr.port,
+    async [Symbol.asyncDispose]() {
+      await server?.shutdown()
+    },
+  }
+}
 
-  default:
-    await readAssets()
-    serve()
-    break
+if (import.meta.main) {
+  switch (Deno.args[0]) {
+    case "build":
+      await buildAssets()
+      break
+
+    case "dev":
+      watchAssets()
+      serve({ port: 4444 })
+      break
+
+    default:
+      await readAssets()
+      serve({ port: 4444 })
+      break
+  }
 }
