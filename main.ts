@@ -42,7 +42,6 @@ export const serveRequest = async (request: Request): Promise<Response> => {
 
 export const serve = (options: { port?: number } = {}) => {
   options.port ??= 0
-  console.log(options)
   const server = Deno.serve(options, serveRequest)
 
   return {

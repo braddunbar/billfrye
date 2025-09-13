@@ -17,7 +17,7 @@ export const assetUrl = (name: string): string | undefined => {
 
 const inputOptions: InputOptions = {
   platform: "browser",
-  input: "./views/index.tsx",
+  input: "./views",
   jsx: {
     importSource: "preact",
     jsxImportSource: "preact",
