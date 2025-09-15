@@ -13,8 +13,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: billfrye
+          POSTGRES_PASSWORD: admin
+          POSTGRES_USER: admin
         ports:
           - 5432:5432
         options: >-
@@ -58,6 +59,8 @@ jobs:
 
       - name: Test
         run: deno task test
+        env:
+          DATABASE_URL: postgresql://admin:admin@localhost/billfrye
 
       - name: Build
         run: deno task build
