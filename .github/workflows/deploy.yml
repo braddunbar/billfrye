@@ -58,8 +58,6 @@ jobs:
 
       - name: Test
         run: deno task test
-        env:
-          DATABASE_URL: postgresql://postgres:5432/postgres
 
       - name: Build
         run: deno task build
