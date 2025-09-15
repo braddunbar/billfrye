@@ -7,4 +7,6 @@ WORKDIR /app
 COPY . .
 RUN deno cache main.ts
 
+ENV DENO_TLS_CA_STORE system
+
 CMD ["deno", "run", "-A", "main.ts"]
