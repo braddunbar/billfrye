@@ -1,11 +1,15 @@
 import { index } from "./index.tsx"
 import { serveDir } from "@std/http/file-server"
+// @ts-types="npm:@types/pg"
+import { Pool, PoolClient } from "pg"
 
+const DATABASE_URL = Deno.env.get("DATABASE_URL") ??
+  "postgresql://localhost/billfrye"
 const BOOM = new URLPattern({ pathname: "/boom" })
 const STATIC = new URLPattern({ pathname: "/static/*" })
 const INDEX = new URLPattern({ pathname: "/" })
 
-const routeRequest = async (request: Request): Promise<Response> => {
+const routeRequest = async ({ db, request }: Context): Promise<Response> => {
   if (STATIC.exec(request.url)) {
     return await serveDir(request, {
       fsRoot: "static",
@@ -19,7 +23,11 @@ const routeRequest = async (request: Request): Promise<Response> => {
   const match = BOOM.exec(request.url)
 
   if (match) {
-    return new Response("boom!")
+    const res = await db.query<{ message: string }>(
+      "SELECT $1::text as message",
+      ["Hello world!"],
+    )
+    return new Response(`boom - ${res.rows[0].message}`)
   }
 
   if (INDEX.exec(request.url)) {
@@ -29,17 +37,36 @@ const routeRequest = async (request: Request): Promise<Response> => {
   return new Response("404", { status: 404 })
 }
 
+type Context = {
+  db: PoolClient
+  request: Request
+}
+
 export class App {
+  pool: Pool
   server?: Deno.HttpServer
 
+  constructor() {
+    this.pool = new Pool({ connectionString: DATABASE_URL })
+  }
+
   async serveRequest(request: Request): Promise<Response> {
-    const response = await routeRequest(request)
+    const db = await this.pool.connect()
+    const context = { db, request }
+    try {
+      const response = await routeRequest(context)
 
-    if (!response.headers.get("cache-control")) {
-      response.headers.set("cache-control", "private,must-revalidate,max-age=0")
+      if (!response.headers.get("cache-control")) {
+        response.headers.set(
+          "cache-control",
+          "private,must-revalidate,max-age=0",
+        )
+      }
+
+      return response
+    } finally {
+      db.release()
     }
-
-    return response
   }
 
   serve(options: { port?: number } = {}) {
@@ -48,6 +75,9 @@ export class App {
   }
 
   async [Symbol.asyncDispose]() {
-    await this.server?.shutdown()
+    await Promise.all([
+      this.server?.shutdown(),
+      this.pool.end(),
+    ])
   }
 }
