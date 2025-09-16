@@ -25,34 +25,12 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: s3cmd
-        uses: s3-actions/s3cmd@v2.0.1
-        with:
-          provider: digitalocean
-          region: "atl1"
-          access_key: ${{ secrets.S3_ACCESS_KEY }}
-          secret_key: ${{ secrets.S3_SECRET_KEY }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: doctl login
-        run: doctl registry login
-
       - uses: actions/checkout@v4
 
       - name: Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v2.x
+          deno-version: v2.5.0
 
       - name: Check
         run: deno task check
@@ -65,15 +43,37 @@ jobs:
       - name: Build
         run: deno task build
 
+      - name: s3cmd
+        uses: s3-actions/s3cmd@v2.0.1
+        with:
+          provider: digitalocean
+          region: "atl1"
+          access_key: ${{ secrets.S3_ACCESS_KEY }}
+          secret_key: ${{ secrets.S3_SECRET_KEY }}
+
       - name: Push to CDN
         working-directory: static
         run: s3cmd sync --recursive --no-delete-removed --acl-public --add-header='Cache-Control:max-age=315360000' . s3://billfrye
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build image
         run: docker buildx build --platform linux/amd64 --output type=docker -t billfrye .
 
       - name: Tag image
         run: docker tag billfrye registry.digitalocean.com/billfrye/web:latest
+
+      - name: doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: doctl login
+        run: doctl registry login
 
       - name: Push image
         run: docker push registry.digitalocean.com/billfrye/web:latest
