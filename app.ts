@@ -5,6 +5,8 @@ import { Pool, PoolClient } from "pg"
 
 const DATABASE_URL = Deno.env.get("DATABASE_URL") ??
   "postgresql://localhost/billfrye"
+const DATABASE_SSL = Deno.env.get("DATABASE_SSL") === "true"
+const ca = await Deno.readTextFile("./ca-certificate.crt")
 const BOOM = new URLPattern({ pathname: "/boom" })
 const STATIC = new URLPattern({ pathname: "/static/*" })
 const INDEX = new URLPattern({ pathname: "/" })
@@ -47,7 +49,10 @@ export class App {
   server?: Deno.HttpServer
 
   constructor() {
-    this.pool = new Pool({ connectionString: DATABASE_URL })
+    this.pool = new Pool({
+      connectionString: DATABASE_URL,
+      ssl: DATABASE_SSL ? { ca } : undefined,
+    })
   }
 
   async serveRequest(request: Request): Promise<Response> {
